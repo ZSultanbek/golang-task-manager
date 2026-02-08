@@ -48,6 +48,32 @@ func GetTaskByIDHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func FilterTasksHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	// Handler logic to filter tasks by done status
+	doneStr := r.URL.Query().Get("done")
+	if doneStr == "" {
+		http.Error(w, `{"error": "missing done query parameter"}`, http.StatusBadRequest)
+		return
+	}
+	done, err := strconv.ParseBool(doneStr)
+	if err != nil {
+		http.Error(w, `{"error": "invalid done value"}`, http.StatusBadRequest)
+		return
+	}
+
+	tasks, err := storage.GlobalTaskStore.FilterTasks(done)
+	if err != nil {
+		http.Error(w, `{"error": "Failed to filter tasks"}`, http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(tasks); err != nil {
+		http.Error(w, `{"error": "Failed to encode tasks"}`, http.StatusInternalServerError)
+		return
+	}
+}
+
 // creating struct for incoming task data
 type CreateTaskRequest struct {
 	Title string `json:"title"`
@@ -63,6 +89,11 @@ func CreateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if strings.TrimSpace(req.Title) == "" {
 		http.Error(w, `{"error": "invalid title"}`, http.StatusBadRequest)
+		return
+	}
+
+	if len(req.Title) > 40 {
+		http.Error(w, `{"error": "title too long"}`, http.StatusBadRequest)
 		return
 	}
 
@@ -114,4 +145,27 @@ func UpdateTaskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(map[string]string{"updated": "true"})
+}
+
+func DeleteTaskHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	// Handler logic to delete a task
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		http.Error(w, `{"error": "invalid id"}`, http.StatusBadRequest)
+		return
+	}
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, `{"error": "invalid id"}`, http.StatusBadRequest)
+		return
+	}
+
+	exists := storage.GlobalTaskStore.DeleteTask(id)
+	if !exists {
+		http.Error(w, `{"error": "task not found"}`, http.StatusNotFound)
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{"deleted": "true"})
 }

@@ -23,6 +23,8 @@ func main() {
 		case http.MethodGet:
 			if r.URL.Query().Has("id") {
 				handlers.GetTaskByIDHandler(w, r)
+			} else if r.URL.Query().Has("done") {
+				handlers.FilterTasksHandler(w, r)
 			} else {
 				handlers.GetTaskHandler(w, r)
 			}
@@ -30,6 +32,8 @@ func main() {
 			handlers.CreateTaskHandler(w, r)
 		case http.MethodPatch:
 			handlers.UpdateTaskHandler(w, r)
+		case http.MethodDelete:
+			handlers.DeleteTaskHandler(w, r)
 		default:
 			http.Error(w, `{"error":"method not allowed"}`, http.StatusMethodNotAllowed)
 		}

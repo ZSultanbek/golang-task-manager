@@ -23,6 +23,19 @@ func (s *TaskStore) GetTaskByID(id int) (models.Task, bool) {
 	return task, exists
 }
 
+func (s *TaskStore) FilterTasks(done bool) ([]models.Task, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	tasks := make([]models.Task, 0)
+	for _, task := range s.tasks {
+		if task.Done == done {
+			tasks = append(tasks, task)
+		}
+	}
+	return tasks, nil
+}
+
 func (s *TaskStore) CreateTask(taskTitle string) (models.Task, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -51,6 +64,19 @@ func (s *TaskStore) UpdateTask(id int, done bool) (bool) {
 	task.Done = done
 	s.tasks[id] = task
 
+	return true
+}
+
+func (s *TaskStore) DeleteTask(id int) (bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	_, exists := s.tasks[id]
+	if !exists {
+		return false
+	}
+
+	delete(s.tasks, id)
 	return true
 }
 
