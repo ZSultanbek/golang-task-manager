@@ -1,14 +1,19 @@
 package main
 
 import (
-	"log"
-	"net/http"
 	"fmt"
+	"context"
+	"time"
 
-	"assignment1/internal/middleware"
-	"assignment1/internal/handlers"
+	_postgres "practice3/internal/repository/postgres"
+	"practice3/pkg/modules"
+	"practice3/internal/handlers"
+	"practice3/internal/usecase"
+	"net/http"
+	"github.com/gorilla/mux"
+	"practice3/internal/middleware"
 )
-
+/*
 func main() {
 	mux := http.NewServeMux()
 
@@ -44,5 +49,53 @@ func main() {
 	fmt.Println("Starting server on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatalf("could not start server: %s\n", err.Error())
+	}
+}
+	*/
+
+func main() {
+	Run()
+}
+
+func Run() {
+	_, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	dbConfig := initPostgreConfig()
+
+	pg := _postgres.New(dbConfig)
+
+	userRepo := _postgres.NewUserRepository(pg)
+	userUsecase := usecase.NewUserUsecase(userRepo)
+	userHandler := handlers.NewUserHandler(userUsecase)
+
+	r := mux.NewRouter()
+
+	//  middleware
+	r.Use(middleware.LoggingMiddleware)
+	r.Use(middleware.APIKeyAuth)
+
+	// routes
+	r.HandleFunc("/users", userHandler.GetUsers).Methods("GET")
+	r.HandleFunc("/users/{id}", userHandler.GetUserByID).Methods("GET")
+	r.HandleFunc("/users", userHandler.CreateUser).Methods("POST")
+	r.HandleFunc("/users/{id}", userHandler.UpdateUser).Methods("PUT")
+	r.HandleFunc("/users/{id}", userHandler.DeleteUser).Methods("DELETE")
+
+	fmt.Println("Starting server on :8080")
+	if err := http.ListenAndServe(":8080", r); err != nil {
+		fmt.Printf("Failed to start server: %v\n", err)
+	}
+}
+
+func initPostgreConfig() *modules.PostgreConfig {
+	return &modules.PostgreConfig{
+		Host:        "localhost",
+		Port:        "5432",
+		Username:    "starvoid",
+		Password:    "postgres",
+		DBName:      "practice3",
+		SSLMode:     "disable",
+		ExecTimeout: 5 * time.Second,
 	}
 }

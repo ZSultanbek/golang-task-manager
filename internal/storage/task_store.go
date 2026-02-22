@@ -3,7 +3,7 @@ package storage
 import (
 	"sync"
 
-	"assignment1/internal/models"
+	"practice3/internal/models"
 )
 
 type TaskStore struct {

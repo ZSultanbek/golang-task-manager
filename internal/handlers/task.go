@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"assignment1/internal/storage"
+	"practice3/internal/storage"
 )
 
 func GetTaskHandler(w http.ResponseWriter, r *http.Request) {
