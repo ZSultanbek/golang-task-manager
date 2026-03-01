@@ -3,11 +3,11 @@ package handlers
 
 import (	"encoding/json"
 	"net/http"
-	"practice3/internal/usecase"
+	"task-manager/internal/usecase"
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"practice3/internal/models"
+	"task-manager/internal/models"
 )
 
 type UserHandler struct {

@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"practice3/internal/models"
+	"task-manager/internal/models"
 )
 
 func (s *TaskStore) GetAllTasks() ([]models.Task, error) {

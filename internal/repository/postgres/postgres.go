@@ -10,7 +10,7 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
-	"practice3/pkg/modules"
+	"task-manager/pkg/modules"
 )
 
 type Dialect struct {
@@ -29,7 +29,7 @@ func New(cfg *modules.PostgreConfig) *Dialect {
 		panic(err)
 	}
 
-	runMigrations(cfg)
+	// runMigrations(cfg)
 
 	return &Dialect{DB: db}
 }

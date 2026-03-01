@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"practice3/internal/models"
-	"practice3/internal/repository"
+	"task-manager/internal/models"
+	"task-manager/internal/repository"
 )
 
 type TaskUseCase struct {

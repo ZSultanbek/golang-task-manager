@@ -1,4 +1,4 @@
-module practice3
+module task-manager
 
 go 1.25.5
 

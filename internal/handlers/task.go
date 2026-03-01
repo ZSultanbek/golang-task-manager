@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"practice3/internal/storage"
+	"task-manager/internal/storage"
 )
 
 func GetTaskHandler(w http.ResponseWriter, r *http.Request) {

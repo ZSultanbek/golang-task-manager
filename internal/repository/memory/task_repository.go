@@ -2,7 +2,7 @@ package memory
 
 import (
 	"errors"
-	"practice3/internal/models"
+	"task-manager/internal/models"
 )
 
 type TaskRepo struct {

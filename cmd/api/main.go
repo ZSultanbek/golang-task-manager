@@ -5,13 +5,14 @@ import (
 	"context"
 	"time"
 
-	_postgres "practice3/internal/repository/postgres"
-	"practice3/pkg/modules"
-	"practice3/internal/handlers"
-	"practice3/internal/usecase"
+	_postgres "task-manager/internal/repository/postgres"
+	"task-manager/pkg/modules"
+	"task-manager/internal/handlers"
+	"task-manager/internal/usecase"
 	"net/http"
 	"github.com/gorilla/mux"
-	"practice3/internal/middleware"
+	"task-manager/internal/middleware"
+	"os"
 )
 /*
 func main() {
@@ -90,12 +91,12 @@ func Run() {
 
 func initPostgreConfig() *modules.PostgreConfig {
 	return &modules.PostgreConfig{
-		Host:        "localhost",
-		Port:        "5432",
-		Username:    "starvoid",
-		Password:    "postgres",
-		DBName:      "practice3",
-		SSLMode:     "disable",
+		Host:        os.Getenv("DB_HOST"),
+		Port:        os.Getenv("DB_PORT"),
+		Username:    os.Getenv("DB_USER"),
+		Password:    os.Getenv("DB_PASSWORD"),
+		DBName:      os.Getenv("DB_NAME"),
+		SSLMode:     os.Getenv("DB_SSLMODE"),
 		ExecTimeout: 5 * time.Second,
 	}
 }

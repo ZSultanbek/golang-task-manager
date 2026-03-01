@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"practice3/internal/models"
-	"practice3/internal/repository/postgres"
+	"task-manager/internal/models"
+	"task-manager/internal/repository/postgres"
 )
 
 type UserRepository interface {
